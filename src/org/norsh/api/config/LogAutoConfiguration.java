@@ -1,6 +1,6 @@
 package org.norsh.api.config;
 
-import org.norsh.util.Log;
+import org.norsh.util.Logger;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
@@ -29,11 +29,11 @@ public class LogAutoConfiguration {
      * This bean initializes the logging system with the current API configuration settings.
      * </p>
      *
-     * @return an instance of {@link Log}.
+     * @return an instance of {@link Logger}.
      */
     @Bean
     @Lazy
-    public Log log() {
-        return new Log(ApiConfig.getInstance().getLogConfig());
+    public Logger log() {
+        return new Logger(ApiConfig.getInstance().getLogConfig());
     }
 }

@@ -3,7 +3,7 @@ package org.norsh.api;
 import java.util.Calendar;
 
 import org.norsh.api.config.ApiConfig;
-import org.norsh.util.Log;
+import org.norsh.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -48,7 +48,7 @@ import jakarta.annotation.PostConstruct;
 public class NorshApiServer {
 
 	@Autowired
-	private Log log;
+	private Logger log;
 
 	/**
 	 * Entry point for the Norsh API Server.

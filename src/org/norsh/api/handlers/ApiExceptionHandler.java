@@ -7,7 +7,7 @@ import org.norsh.exceptions.ArgumentException;
 import org.norsh.exceptions.InternalException;
 import org.norsh.exceptions.NorshException;
 import org.norsh.exceptions.OperationException;
-import org.norsh.util.Log;
+import org.norsh.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +62,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 	@Autowired
-	private Log log;
+	private Logger log;
 
 	/**
 	 * Handles validation and argument exceptions.
