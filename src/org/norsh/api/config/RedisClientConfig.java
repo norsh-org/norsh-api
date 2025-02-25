@@ -2,6 +2,7 @@ package org.norsh.api.config;
 
 import org.norsh.cache.RedisClient;
 import org.norsh.config.RedisConfig;
+import org.norsh.util.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -40,14 +41,14 @@ public class RedisClientConfig extends RedisClient {
      * @throws IllegalStateException if Redis configuration is missing.
      */
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
+    public RedisConnectionFactory redisConnectionFactory(Logger log) {
         RedisConfig redisConfig = ApiConfig.getInstance().getRedisConfig();
 
         if (redisConfig == null) {
             throw new IllegalStateException("Redis configuration is missing. Ensure it is properly set in ApiConfig.");
         }
 
-        RedisConnectionFactory redisConnectionFactory = super.redisConnectionFactory(redisConfig);
+        RedisConnectionFactory redisConnectionFactory = super.redisConnectionFactory(redisConfig, log);
 
         // Clears Redis configuration after successful initialization
         ApiConfig.getInstance().clearRedisConfig();
