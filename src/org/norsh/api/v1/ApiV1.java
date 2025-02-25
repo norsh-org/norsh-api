@@ -1,12 +1,14 @@
 package org.norsh.api.v1;
 
+import org.norsh.api.config.ApiConfig;
 import org.norsh.api.service.MessagingRequestService;
-import org.norsh.model.transport.RestMethod;
 import org.norsh.model.transport.DataTransfer;
+import org.norsh.model.transport.RestMethod;
 import org.norsh.util.Converter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -51,16 +53,10 @@ public abstract class ApiV1 {
 	 */
 	protected ResponseEntity<Object> processRequest(String requestId, Object o) {
 		RestMethod restMethod = RestMethod.valueOf(servletRequest.getMethod());
-		DataTransfer transport = new DataTransfer(requestId,restMethod, o);
+		DataTransfer requestTransfer = new DataTransfer(requestId,restMethod, o);
 		
-		if (servletRequest.getParameter("async") != null) {
-			transport = messagingService.request(transport);
-			
-			return new ResponseEntity<Object>(transport, HttpStatus.ACCEPTED);
-		} else {
-			transport = messagingService.requestAndWait(transport);
-			return resquestStatusToResponseEntity(transport);
-		}
+		DataTransfer responseTransfer =  new RestTemplate().postForObject(ApiConfig.getInstance().get("transfer.url", ""), requestTransfer, DataTransfer.class);
+		return resquestStatusToResponseEntity(responseTransfer);
 	}
 
 	private ResponseEntity<Object> resquestStatusToResponseEntity(DataTransfer transport) {

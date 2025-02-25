@@ -36,7 +36,9 @@
 		"spring.main.web-environment": false,
 		"logging.level.root": "WARN"
 	},
-
+	
+	"transfer.url": "http://localhost:4545/v1/blockchain",
+	
 	"redis": {
 		"host": "localhost",
 		"port": 6379
