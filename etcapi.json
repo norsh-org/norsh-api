@@ -34,7 +34,7 @@
 		"x.ssl.keyStoreType": "JKS",
 		"spring.profiles.active": "main",
 		"spring.main.web-environment": false,
-		"xxlogging.level.root": "WARN"
+		"logging.level.root": "WARN"
 	},
 
 	"transfer.url": "http://3.87.215.59:4545/v1/blockchain",
