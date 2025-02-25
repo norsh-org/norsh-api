@@ -9,6 +9,7 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -44,7 +45,7 @@ import jakarta.annotation.PostConstruct;
  */
 @SpringBootApplication
 @ComponentScan("org.norsh.api")
-@EnableAutoConfiguration(exclude = { WebMvcAutoConfiguration.class })
+@EnableAutoConfiguration(exclude = { WebMvcAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class })
 public class NorshApiServer {
 
 	@Autowired
