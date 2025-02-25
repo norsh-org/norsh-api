@@ -1,10 +1,8 @@
 package org.norsh.api.v1;
 
 import org.norsh.api.config.ApiConfig;
-import org.norsh.api.service.MessagingRequestService;
 import org.norsh.model.transport.DataTransfer;
 import org.norsh.model.transport.RestMethod;
-import org.norsh.util.Converter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +37,6 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public abstract class ApiV1 {
 	@Autowired
-	protected MessagingRequestService messagingService;
-	
-	@Autowired
 	protected HttpServletRequest servletRequest;
 
 	/**
@@ -60,8 +55,6 @@ public abstract class ApiV1 {
 	}
 
 	private ResponseEntity<Object> resquestStatusToResponseEntity(DataTransfer transport) {
-		System.out.println(Converter.toJsonPretty(transport));
-		
 		return switch (transport.getStatus()) {
 		case EXISTS -> new ResponseEntity<Object>(transport.toResponse(), HttpStatus.CONFLICT);
 		case TIMEOUT -> new ResponseEntity<Object>(transport.toResponse(), HttpStatus.REQUEST_TIMEOUT);

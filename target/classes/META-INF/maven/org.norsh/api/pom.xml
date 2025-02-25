@@ -48,17 +48,6 @@
 			<artifactId>gson</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka</artifactId>
-		</dependency>
-		
-		<!-- Kafka Clients -->
-		<dependency>
-			<groupId>org.apache.kafka</groupId>
-			<artifactId>kafka-clients</artifactId>
-		</dependency>
-
 		<!-- crypto-->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
