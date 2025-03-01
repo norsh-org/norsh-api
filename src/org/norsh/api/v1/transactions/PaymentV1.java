@@ -2,24 +2,18 @@ package org.norsh.api.v1.transactions;
 
 import org.norsh.api.v1.ApiV1;
 import org.norsh.model.dtos.transactions.PaymentCreateDto;
-import org.norsh.util.Converter;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.norsh.rest.RestMethod;
+import org.norsh.rest.RestRequest;
+import org.norsh.rest.RestResponse;
+import org.norsh.rest.annotations.Mapping;
 
-@RestController
-@RequestMapping("/v1/payments")
+@Mapping("/v1/payments")
 public class PaymentV1 extends ApiV1 {
-	@PostMapping("/generate")
-	public ResponseEntity<Object> generate(@RequestBody PaymentCreateDto dto) {
+	@Mapping(value="/generate", method = RestMethod.POST)
+	public void generate(RestRequest request, RestResponse response) throws Exception {
+		PaymentCreateDto dto = request.getBody(PaymentCreateDto.class);
 		dto.validate();
 		
-		System.out.println(Converter.toJsonPretty(dto));
-		
-		return processRequest(dto.getHash(), dto);
-
+		processRequest(request, response, dto.getHash(), dto);
 	}
-
 }

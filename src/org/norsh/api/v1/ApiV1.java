@@ -1,14 +1,20 @@
 package org.norsh.api.v1;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
+
 import org.norsh.api.config.ApiConfig;
 import org.norsh.model.transport.DataTransfer;
-import org.norsh.model.transport.RestMethod;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
-
-import jakarta.servlet.http.HttpServletRequest;
+import org.norsh.rest.RestRequest;
+import org.norsh.rest.RestResponse;
+import org.norsh.util.Converter;
 
 /**
  * Abstract base class for API version 1 controllers.
@@ -36,33 +42,40 @@ import jakarta.servlet.http.HttpServletRequest;
  * @see <a href="https://docs.norsh.org">Norsh Documentation</a>
  */
 public abstract class ApiV1 {
-	@Autowired
-	protected HttpServletRequest servletRequest;
+	// @Autowired
+	// protected HttpServletRequest servletRequest;
 
 	/**
 	 * Processes a Smart Element request, forwarding it to the queue and caching its status.
 	 *
-	 * @param request The unique request identifier.
+	 * @param restRequest The unique request identifier.
 	 * @param data    The payload to be sent to the processing queue.
 	 * @return a response confirming that the request has been accepted for processing.
+	 * @throws URISyntaxException 
 	 */
-	protected ResponseEntity<Object> processRequest(String requestId, Object o) {
-		RestMethod restMethod = RestMethod.valueOf(servletRequest.getMethod());
-		DataTransfer requestTransfer = new DataTransfer(requestId,restMethod, o);
-		
-		DataTransfer responseTransfer =  new RestTemplate().postForObject(ApiConfig.getInstance().get("transfer.url", ""), requestTransfer, DataTransfer.class);
-		return resquestStatusToResponseEntity(responseTransfer);
-	}
+	protected void processRequest(RestRequest restRequest, RestResponse restResponse, String requestId, Object o) throws IOException, InterruptedException, URISyntaxException {
+		DataTransfer requestTransfer = new DataTransfer(requestId, restRequest.getRestMethod(), o);
 
-	private ResponseEntity<Object> resquestStatusToResponseEntity(DataTransfer transport) {
-		return switch (transport.getStatus()) {
-		case EXISTS -> new ResponseEntity<Object>(transport.toResponse(), HttpStatus.CONFLICT);
-		case TIMEOUT -> new ResponseEntity<Object>(transport.toResponse(), HttpStatus.REQUEST_TIMEOUT);
-		case NOT_FOUND -> new ResponseEntity<Object>(transport.toResponse(), HttpStatus.NOT_FOUND);
-		case ERROR -> new ResponseEntity<Object>(transport.toResponse(), HttpStatus.INTERNAL_SERVER_ERROR);
-		case INSUFFICIENT_BALANCE -> new ResponseEntity<Object>(transport.toResponse(), HttpStatus.PAYMENT_REQUIRED);
-		case FORBIDDEN -> new ResponseEntity<Object>(transport.toResponse(), HttpStatus.FORBIDDEN);
-		default -> ResponseEntity.status(HttpStatus.OK).body(transport.getResponseData());
+		HttpRequest httpRequest = HttpRequest.newBuilder()
+				.uri(new URI(ApiConfig.getInstance().get("transfer.url", "")))
+				.timeout(Duration.ofSeconds(30))
+				.header("Content-Type", "application/json")
+				.POST(BodyPublishers.ofString(Converter.toJson(requestTransfer)))
+				.build();
+
+		HttpClient client = HttpClient.newBuilder().build();
+		HttpResponse<String> httpResponse = client.send(httpRequest, BodyHandlers.ofString());
+
+		DataTransfer responseTransfer = Converter.fromJson(httpResponse.body(), DataTransfer.class);
+
+		switch (responseTransfer.getStatus()) {
+			case EXISTS -> restResponse.setBody(209, responseTransfer.toResponse());
+			case TIMEOUT -> restResponse.setBody(408, responseTransfer.toResponse());
+			case NOT_FOUND -> restResponse.setBody(404, responseTransfer.toResponse());
+			case ERROR -> restResponse.setBody(500, responseTransfer.toResponse());
+			case INSUFFICIENT_BALANCE -> restResponse.setBody(402, responseTransfer.toResponse());
+			case FORBIDDEN -> restResponse.setBody(403, responseTransfer.toResponse());
+			default -> restResponse.setBody(responseTransfer.getResponseData());
 		};
 	}
 }

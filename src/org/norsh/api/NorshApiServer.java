@@ -3,17 +3,10 @@ package org.norsh.api;
 import java.util.Calendar;
 
 import org.norsh.api.config.ApiConfig;
+import org.norsh.api.v1.crypto.AddressApiV1;
+import org.norsh.api.v1.transactions.PaymentV1;
+import org.norsh.rest.HttpServer;
 import org.norsh.util.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-
-import jakarta.annotation.PostConstruct;
 
 /**
  * Main class for the Norsh Distributed Blockchain Server (NDBServer).
@@ -43,12 +36,12 @@ import jakarta.annotation.PostConstruct;
  * @version 1.0.0
  * @see <a href="https://docs.norsh.org">Norsh Documentation</a>
  */
-@SpringBootApplication
-@ComponentScan("org.norsh.api")
-@EnableAutoConfiguration(exclude = { WebMvcAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class })
+//@SpringBootApplication
+//@ComponentScan("org.norsh.api")
+//@EnableAutoConfiguration(exclude = { WebMvcAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class })
 public class NorshApiServer {
 
-	@Autowired
+	//@Autowired
 	private Logger log;
 
 	/**
@@ -69,11 +62,18 @@ public class NorshApiServer {
 	 */
 	public static void main(String[] args) {
 		ApiConfig.initializeDefaultLocalization();
-
-		SpringApplication app = new SpringApplication(NorshApiServer.class);
-		app.setBannerMode(Banner.Mode.OFF);
-		app.setDefaultProperties(ApiConfig.getInstance().getSpringProperties());
-		app.run();
+		
+		
+		HttpServer httpServer = new HttpServer();
+		httpServer.addEndpoint(AddressApiV1.class);
+		httpServer.addEndpoint(PaymentV1.class);
+		
+		httpServer.start(9090);
+		//bootstrap();
+//		SpringApplication app = new SpringApplication(NorshApiServer.class);
+//		app.setBannerMode(Banner.Mode.OFF);
+//		app.setDefaultProperties(ApiConfig.getInstance().getSpringProperties());
+//		app.run();
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class NorshApiServer {
 	 * including system metadata, author details, and server connection properties.
      * </p>
      */
-	@PostConstruct
+	//@PostConstruct
 	private void bootstrap() {
 		log.system("Norsh API Server");
 		log.system("Developed by " + String.join(", ", "Danthur Lice") + " and contributors.");

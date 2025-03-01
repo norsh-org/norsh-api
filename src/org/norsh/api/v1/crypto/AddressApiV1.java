@@ -2,18 +2,16 @@ package org.norsh.api.v1.crypto;
 
 import java.util.Map;
 
-import org.norsh.api.v1.ApiV1;
 import org.norsh.exceptions.InternalException;
 import org.norsh.exceptions.NorshException;
 import org.norsh.model.dtos.crypto.AddressApiV1GenerateDto;
+import org.norsh.rest.RestMethod;
+import org.norsh.rest.RestRequest;
+import org.norsh.rest.RestResponse;
+import org.norsh.rest.annotations.Mapping;
 import org.norsh.security.Cryptography;
 import org.norsh.security.Hasher;
 import org.norsh.util.Converter;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * API controller for handling cryptographic address generation.
@@ -26,9 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Danthur Lice
  * @see <a href="https://docs.norsh.org">Norsh Documentation</a>
  */
-@RestController
-@RequestMapping("/v1/crypto/address")
-public class AddressApiV1 extends ApiV1 {
+@Mapping("/v1/crypto/address")
+public class AddressApiV1 {
 
     /**
      * Generates a cryptographic address from a provided public key.
@@ -42,8 +39,9 @@ public class AddressApiV1 extends ApiV1 {
      * @throws InternalException if an unexpected error occurs during processing.
      * @see <a href="https://docs.norsh.org/v1/crypto/address/generate">Generates an address from a public key.</a>
      */
-    @PostMapping("/generate")
-    public ResponseEntity<Map<String, Object>> generate(@RequestBody AddressApiV1GenerateDto body) {
+	@Mapping(value="/generate", method = RestMethod.POST)
+	public void generate(RestRequest request, RestResponse response) throws Exception {
+		AddressApiV1GenerateDto body = request.getBody(AddressApiV1GenerateDto.class);
         try {
         	byte[] publicKeyBytes = Converter.base64OrHexToBytes(body == null ? null : body.getPublicKey());
         	
@@ -51,7 +49,7 @@ public class AddressApiV1 extends ApiV1 {
         	Cryptography.valueOf(null, publicKeyBytes);
         	
             String addressHex = Hasher.sha3Hex(publicKeyBytes);
-            return ResponseEntity.ok(Map.of("address", addressHex));
+            response.setBody(Map.of("address", addressHex));
         } catch (NorshException e) {
             throw e; 
         } catch (Throwable t) {

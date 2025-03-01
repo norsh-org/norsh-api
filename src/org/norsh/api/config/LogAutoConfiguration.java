@@ -1,12 +1,6 @@
 package org.norsh.api.config;
 
 import org.norsh.util.Logger;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.core.Ordered;
 
 /**
  * Auto-configuration for system logging.
@@ -19,8 +13,8 @@ import org.springframework.core.Ordered;
  * @author Danthur Lice
  * @see <a href="https://docs.norsh.org">Norsh Documentation</a>
  */
-@AutoConfiguration(before = { DispatcherServletAutoConfiguration.class })
-@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+//@AutoConfiguration(before = { DispatcherServletAutoConfiguration.class })
+//@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 public class LogAutoConfiguration {
 
     /**
@@ -31,8 +25,8 @@ public class LogAutoConfiguration {
      *
      * @return an instance of {@link Logger}.
      */
-    @Bean
-    @Lazy
+//    @Bean
+//    @Lazy
     public Logger log() {
         return new Logger(ApiConfig.getInstance().getLogConfig());
     }
