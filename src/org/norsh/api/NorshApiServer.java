@@ -43,7 +43,7 @@ import org.norsh.util.Logger;
 public class NorshApiServer {
 
 	//@Autowired
-	private Logger log;
+	private static Logger log;
 
 	/**
 	 * Entry point for the Norsh API Server.
@@ -63,12 +63,15 @@ public class NorshApiServer {
 	 */
 	public static void main(String[] args) {
 		ApiConfig.initializeDefaultLocalization();
+		log = new Logger(ApiConfig.getInstance().getLogConfig());
 		
 		
 		HttpServer httpServer = new HttpServer();
 		httpServer.addEndpoint(AddressApiV1.class);
 		httpServer.addEndpoint(PaymentV1.class);
 		httpServer.addEndpoint(ElementV1.class);
+		
+		bootstrap();
 		
 		httpServer.start(9090);
 		//bootstrap();
@@ -86,7 +89,7 @@ public class NorshApiServer {
      * </p>
      */
 	//@PostConstruct
-	private void bootstrap() {
+	private static void bootstrap() {
 		log.system("Norsh API Server");
 		log.system("Developed by " + String.join(", ", "Danthur Lice") + " and contributors.");
 		log.system(String.format("Copyright © 2024-%s Norsh. All rights reserved", Calendar.getInstance().get(Calendar.YEAR)));
