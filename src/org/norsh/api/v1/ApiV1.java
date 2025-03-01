@@ -57,7 +57,7 @@ public abstract class ApiV1 {
 		DataTransfer requestTransfer = new DataTransfer(requestId, restRequest.getRestMethod(), o);
 		String json = Converter.toJson(requestTransfer);
 		
-		System.out.println(json);
+		System.out.println("\nRequest: " + json);
 		
 		HttpRequest httpRequest = HttpRequest.newBuilder()
 				.uri(new URI(ApiConfig.getInstance().get("transfer.url", "")))
@@ -70,6 +70,8 @@ public abstract class ApiV1 {
 		HttpClient client = HttpClient.newBuilder().build();
 		HttpResponse<String> httpResponse = client.send(httpRequest, BodyHandlers.ofString());
 
+		System.out.println("\n\nResponse: " + httpResponse.body());
+		
 		DataTransfer responseTransfer = Converter.fromJson(httpResponse.body(), DataTransfer.class);
 
 		switch (responseTransfer.getStatus()) {
