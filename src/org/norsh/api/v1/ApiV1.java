@@ -63,6 +63,7 @@ public abstract class ApiV1 {
 				.uri(new URI(ApiConfig.getInstance().get("transfer.url", "")))
 				.timeout(Duration.ofSeconds(30))
 				.header("Content-Type", "application/json")
+				.header("Connection", "keep-alive")
 				.POST(BodyPublishers.ofString(json))
 				.build();
 
