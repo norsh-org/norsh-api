@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import org.norsh.api.config.ApiConfig;
 import org.norsh.api.v1.crypto.AddressApiV1;
+import org.norsh.api.v1.elements.ElementV1;
 import org.norsh.api.v1.transactions.PaymentV1;
 import org.norsh.rest.HttpServer;
 import org.norsh.util.Logger;
@@ -67,6 +68,7 @@ public class NorshApiServer {
 		HttpServer httpServer = new HttpServer();
 		httpServer.addEndpoint(AddressApiV1.class);
 		httpServer.addEndpoint(PaymentV1.class);
+		httpServer.addEndpoint(ElementV1.class);
 		
 		httpServer.start(9090);
 		//bootstrap();
