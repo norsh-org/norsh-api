@@ -55,12 +55,15 @@ public abstract class ApiV1 {
 	 */
 	protected void processRequest(RestRequest restRequest, RestResponse restResponse, String requestId, Object o) throws IOException, InterruptedException, URISyntaxException {
 		DataTransfer requestTransfer = new DataTransfer(requestId, restRequest.getRestMethod(), o);
-
+		String json = Converter.toJson(requestTransfer);
+		
+		System.out.println(json);
+		
 		HttpRequest httpRequest = HttpRequest.newBuilder()
 				.uri(new URI(ApiConfig.getInstance().get("transfer.url", "")))
 				.timeout(Duration.ofSeconds(30))
 				.header("Content-Type", "application/json")
-				.POST(BodyPublishers.ofString(Converter.toJson(requestTransfer)))
+				.POST(BodyPublishers.ofString(json))
 				.build();
 
 		HttpClient client = HttpClient.newBuilder().build();
