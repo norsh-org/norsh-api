@@ -45,6 +45,7 @@ public abstract class ApiV1 {
 	// @Autowired
 	// protected HttpServletRequest servletRequest;
 
+	private	HttpClient client = HttpClient.newBuilder().build();
 	/**
 	 * Processes a Smart Element request, forwarding it to the queue and caching its status.
 	 *
@@ -67,7 +68,7 @@ public abstract class ApiV1 {
 				.POST(BodyPublishers.ofString(json))
 				.build();
 
-		HttpClient client = HttpClient.newBuilder().build();
+		
 		HttpResponse<String> httpResponse = client.send(httpRequest, BodyHandlers.ofString());
 
 		System.out.println("\n\nResponse: " + httpResponse.body());
