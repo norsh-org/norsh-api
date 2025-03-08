@@ -62,7 +62,7 @@ public class NorshApiServer {
 		ApiConfig.initializeDefaultLocalization();
 
 		Log log = new Log(ApiConfig.getInstance().getLogConfig());
-		log.system("Norsh API Server");
+		log.system("Norsh API Server ○ ●●");
 		log.system("Developed by " + String.join(", ", "Danthur Lice") + " and contributors.");
 		log.system(String.format("Copyright © 2024-%s Norsh. All rights reserved", Calendar.getInstance().get(Calendar.YEAR)));
 		log.system(String.format("Server address: %s:%s", ApiConfig.getInstance().getSpringProperties().get("server.host"), ApiConfig.getInstance().getSpringProperties().get("server.port")));
