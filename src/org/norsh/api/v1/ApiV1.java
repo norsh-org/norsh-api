@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
+import java.util.Optional;
 
 import org.norsh.api.config.ApiConfig;
 import org.norsh.model.transport.DataTransfer;
@@ -59,12 +61,18 @@ public abstract class ApiV1 {
 				.uri(new URI(ApiConfig.getInstance().get("transfer.url", "")))
 				.timeout(Duration.ofSeconds(30))
 				.header("Content-Type", "application/json")
-				.expectContinue(true)
+				.version(Version.HTTP_1_1)
+				.expectContinue(false)
 				.POST(BodyPublishers.ofString(json))
 				.build();
-
 		
 		HttpResponse<String> httpResponse = client.send(httpRequest, BodyHandlers.ofString());
+		
+		Optional<String> duration = httpResponse.headers().firstValue("X-Duration");
+		if (duration.isPresent()) {
+			restResponse.addHeader("X-Duration-Blockchain", String.valueOf(duration.get()));
+		}
+		
 		DataTransfer responseTransfer = Converter.fromJson(httpResponse.body(), DataTransfer.class);
 
 		switch (responseTransfer.getStatus()) {

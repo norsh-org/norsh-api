@@ -13,6 +13,9 @@ import org.norsh.rest.annotations.ThrowableHandler;
 public class ApiThrowableHandler {
 	@ThrowableHandler(Exception.class)
 	public void exception(RestRequest request, RestResponse response, Throwable ex) throws IOException {
+		if (response == null)
+			return;
+		
 		response.setBody(500, buildResponse(ex));
 		response.writeResponse();
 	}
